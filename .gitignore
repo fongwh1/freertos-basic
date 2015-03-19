@@ -9,3 +9,4 @@ test-romfs.bin
 build
 output
 tags
+cscope.*
