@@ -7,6 +7,9 @@
 #include "romfs.h"
 #include "osdebug.h"
 #include "hash-djb2.h"
+#include "dir.h"
+
+#define hash_init 5381
 
 struct romfs_fds_t {
     const uint8_t * file;
@@ -14,7 +17,22 @@ struct romfs_fds_t {
     uint32_t size;
 };
 
+struct romfs_dirent_t {
+    uint32_t d_ino; /* unused so far*/
+    char d_name[128]; /* dir name, assume the name of a file
+                         would be shorter than 128 charaters*/
+};
+
+struct romfs_dirs_t {
+    uint32_t start;
+    uint32_t cur_off;
+    uint32_t end;
+}
+
 static struct romfs_fds_t romfs_fds[MAX_FDS];
+
+static struct romfs_dirent_t romfs_dirent[DIR_LEN];
+static struct romfs_dirs_t romfs_dirs[MAX_DIRS];
 
 static uint32_t get_unaligned(const uint8_t * d) {
     return ((uint32_t) d[0]) | ((uint32_t) (d[1] << 8)) | ((uint32_t) (d[2] << 16)) | ((uint32_t) (d[3] << 24));
@@ -79,6 +97,10 @@ const uint8_t * romfs_get_file_by_hash(const uint8_t * romfs, uint32_t h, uint32
     return NULL;
 }
 
+int romfs_opendir(void * opaque, const char * fname){
+    return NULL;
+}
+
 static int romfs_open(void * opaque, const char * path, int flags, int mode) {
     uint32_t h = hash_djb2((const uint8_t *) path, -1);
     const uint8_t * romfs = (const uint8_t *) opaque;
@@ -106,5 +128,5 @@ static int romfs_open(void * opaque, const char * path, int flags, int mode) {
 
 void register_romfs(const char * mountpoint, const uint8_t * romfs) {
 //    DBGOUT("Registering romfs `%s' @ %p\r\n", mountpoint, romfs);
-    register_fs(mountpoint, romfs_open, NULL, (void *) romfs);
+    register_fs(mountpoint, romfs_open, romfs_opendir, (void *) romfs);
 }
