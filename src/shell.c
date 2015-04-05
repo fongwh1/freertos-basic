@@ -4,6 +4,7 @@
 #include <string.h>
 #include "fio.h"
 #include "filesystem.h"
+#include "dir.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -27,6 +28,7 @@ void test_command(int, char **);
 void _command(int, char **);
 
 #define MKCL(n, d) {.name=#n, .fptr=n ## _command, .desc=d}
+#define NAME_SIZE 48
 
 cmdlist cl[]={
 	MKCL(ls, "List directory"),
@@ -64,11 +66,18 @@ int parse_command(char *str, char *argv[]){
 void ls_command(int n, char *argv[]){
     fio_printf(1,"\r\n"); 
     int dir;
-    if(n == 0){
+    int c_readed = 0;
+    char d_name[NAME_SIZE];
+    if(n == 1){
         dir = fs_opendir("");
-    }else if(n == 1){
+    }else if(n == 2){
         dir = fs_opendir(argv[1]);
-        //if(dir == )
+        c_readed = dir_next(dir, (void *) d_name, NAME_SIZE);
+        while (c_readed > 0) {
+            fio_printf(1, "%s\r\n", (char *)d_name);
+            c_readed = dir_next(dir, (void *) d_name, NAME_SIZE);
+        }
+        dir_close(dir);
     }else{
         fio_printf(1, "Too many argument!\r\n");
         return;
