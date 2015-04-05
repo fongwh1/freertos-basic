@@ -47,7 +47,7 @@ int dir_open(dirnext_t dirnext, dirclose_t dirclose, void * opaque){
 
     xSemaphoreTake(dir_sem, portMAX_DELAY); 
     dird = dir_finddird();
-    if(dird > 0){
+    if(dird >= 0){
         dirds[dird].dirnext = dirnext;
         dirds[dird].dirclose = dirclose;
         dirds[dird].opaque = opaque;
