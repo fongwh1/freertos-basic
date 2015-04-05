@@ -17,6 +17,7 @@ typedef struct dirdef_t {
     void * opaque;
 }dirdef_t;
 
+__attribute__((constructor)) void dir_init();
 int dir_open(dirnext_t dirnext, dirclose_t dirclose, void * opaque);
 int dir_is_open(int fd);
 int dir_next(int dird, void * buf, size_t bufsize);

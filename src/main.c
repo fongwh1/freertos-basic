@@ -11,6 +11,7 @@
 /* Filesystem includes */
 #include "filesystem.h"
 #include "fio.h"
+#include "dir.h"
 #include "romfs.h"
 
 #include "clib.h"
@@ -155,6 +156,7 @@ int main()
 	
 	fs_init();
 	fio_init();
+    dir_init();
 	
 	register_romfs("romfs", &_sromfs);
 	
