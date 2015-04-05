@@ -36,9 +36,9 @@ static int dir_finddird(){
 
 int dir_is_open(int dird){
     int r;
-    xSemaphoreTake(dir_sem, portMAX_DELAY); 
+//    xSemaphoreTake(dir_sem, portMAX_DELAY); 
     r = dir_is_open_int(dird);
-    xSemaphoreGive(dir_sem);
+//    xSemaphoreGive(dir_sem);
     return r;
 }
 
